@@ -6,7 +6,7 @@ import { auth, firestore } from '../firebase';
 import NetworkHandler from '../NetworkHandler';
 
 //import Identicon from '@polkadot/reactnative-identicon';
-
+import { FloatingAction } from "react-native-floating-action";
 import {
   StyleSheet,
   Button,
@@ -16,6 +16,7 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Modal,
+  Image,
 } from "react-native";
 import { set } from "react-native-reanimated";
 
@@ -156,7 +157,7 @@ const WalletScreen = () => {
   }, [])
 
   return (
-    <View style={styles.WalletScreen}>
+    <View style={styles.walletScreen}>
     
     <Header wallets={wallets} setWallets={setWallets} setSelectedWallet={setSelectedWallet} setModalIsVisible={setModalIsVisible}
         title={'Force load'}
@@ -166,11 +167,37 @@ const WalletScreen = () => {
         }}
       />
       
-      {selectedWallet ? <TransactionList wallet={selectedWallet} /> : <ActivityIndicator size={50}/>}
+      {wallets.length > 0 ? <TransactionList wallet={selectedWallet} /> : <ActivityIndicator size={50}/>}
       <CreateWalletModal isModalVisible={isModalVisible} setModalIsVisible={setModalIsVisible} />
+      <FloatingAction
+        color={'#E50D7B'}
+        onPressItem={name => {
+      console.log(`selected button: ${name}`);
+    }}
+  />
     </View>
   );
 };
+
+/*
+<TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => {}}
+          style={styles.fab}>
+          <Image
+            // FAB using TouchableOpacity with an image
+            // For online image
+            source={{
+              uri:
+                'https://raw.githubusercontent.com/AboutReact/sampleresource/master/plus_icon.png',
+            }}
+            // For local image
+            //source={require('./images/float-add-icon.png')}
+            style={styles.fab}
+          />
+        </TouchableOpacity>
+
+*/
 
 export default function Home() {
   return <WalletScreen />;
@@ -182,7 +209,7 @@ const styles = StyleSheet.create({
     width: "100%",
     backgroundColor: "#fff",
     alignItems: "center",
-    justifyContent: "center",
+    //justifyContent: "center",
   },
   header: {
     justifyContent: "center",
@@ -234,6 +261,15 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: '60%',
     height: '15%'
-  }
+  },
+  fab: {
+    position: 'absolute',
+    width: 50,
+    height: 50,
+    alignItems: 'center',
+    justifyContent: 'center',
+    right: 30,
+    bottom: 30,
+  },
 
 });

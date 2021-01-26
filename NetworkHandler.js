@@ -29,19 +29,6 @@ export default class NetworkHandler {
                 let ref = firebase.firestore().collection('users').doc(user).collection('wallets').doc(address).collection('transactions')
                 
                 ref.onSnapshot((snapShot) => {
-                    console.log(1)
-
-                    /*
-                    snapShot.docChanges().forEach((change) => {
-                        if (change.type === 'added') {
-                            let transaction = change.doc.data();
-                            console.log(change.doc.id)
-                            console.log(change.doc.data());
-                            console.log(transaction.ref)
-                            transactions.push(transaction);
-                        }
-                    })
-                    */
 
                     snapShot.forEach((transaction) => {
                         let transactionFound = false;
@@ -93,7 +80,7 @@ export default class NetworkHandler {
                     if(!walletFound) {
                         wallets.push(wallet);
                     }
-                    console.log(2)
+
                     setWallets((oldWallets) => {
 
                         setSelectedWallet((old) => old)
