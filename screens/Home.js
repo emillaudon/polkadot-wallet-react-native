@@ -17,6 +17,7 @@ import {
   ActivityIndicator,
   Modal,
   Image,
+  ImageBackground,
 } from "react-native";
 import { set } from "react-native-reanimated";
 
@@ -57,10 +58,15 @@ const WalletBox = ({ item, setSelectedWallet }) => {
 };
 
 const Header = ({ wallets, setWallets, setSelectedWallet, setModalIsVisible }) => {
+  const logo = require('../assets/logo.png')
+  
   return (
     <View style={styles.header}>
+      <ImageBackground source={logo} style={{ resizeMode: 'cover', resizeMethod: 'resize' }}>
+      
       <FlatList
         horizontal={true}
+        showsHorizontalScrollIndicator={false}
         data={wallets}
         renderItem={({ item, index }) => <WalletBox item={item} setSelectedWallet={setSelectedWallet} />}
         ListHeaderComponent={ wallets.length > 0 ? null : <ActivityIndicator size={50} style={{ paddingTop:70 }}/> }
@@ -68,39 +74,65 @@ const Header = ({ wallets, setWallets, setSelectedWallet, setModalIsVisible }) =
           <CreateWalletBox wallets={wallets} setWallets={setWallets} setModalIsVisible={setModalIsVisible} />
         }
       />
+      </ImageBackground>
     </View>
   );
 };
 
 const TransactionBox = ({ transactionData }) => {
-  let transaction = transactionData.data
+  //let transaction = transactionData.data
+  let transaction = transactionData;
+  let color = transaction.received ? 'green' : 'red'
   
   return (
     <View
       style={styles.transactionBox}
     >
       <View>
-        <Text>{transaction.received ? 'Received' : 'Sent'}</Text>
-        <Text style={{ fontSize: 22 }}>{transaction.amount} DOT</Text>
+        <Text style={{ fontSize: 15,fontWeight: 'bold' }}>{transaction.received ? 'From' : 'To'}</Text>
+        <Text style={{ fontStyle: 'italic' }}>{transaction.received ? transaction.from : transaction.to}</Text>
       </View>
-      <View>
-        <Text>{transaction.received ? 'From' : 'To'}</Text>
-        <Text>{transaction.received ? transaction.from : transaction.to}</Text>
-      </View>
-      <View>
-        <Text>{transaction.time}</Text>
-        <Text>{transaction.date}</Text>
-        <Text>{transaction.year}</Text>
+      
+
+      <View style={{ flexDirection: 'row' }}>
+        <Text style={{ fontSize: 20, color: color }}>{transaction.received ? '+ ' : '- '}</Text>
+        <Text style={{ fontSize: 22, color: color }}>{transaction.amount} DOT</Text>
       </View>
     </View>
   );
 };
 
 const TransactionList = ({ wallet }) => {
+  let i = [
+    {
+      received: true,
+      amount: 20,
+      from: 'faksfkasfasfafasfafaf',
+      to: 'faoskfapksfaksfkasfkakfasfas',
+      date: '2020/21/02 15:48'
+
+    },
+    {
+      received: false,
+      amount: 220,
+      from: 'faksfkasfasfafasfafaf',
+      to: 'faoskfapksfaksfkasfkakfasfas',
+      date: '2020/21/02 15:48'
+
+    },
+    {
+      received: false,
+      amount: 10,
+      from: 'faksfkasfasfafasfafaf',
+      to: 'faoskfapksfaksfkasfkakfasfas',
+      date: '2020/21/02 15:48'
+
+    }
+  ]
   return (
     <View style={styles.transactionList}>
       <FlatList
-        data={wallet.transactions}
+        data={i}
         renderItem={({ item, index }) => <TransactionBox transactionData={item} />}
       />
     </View>
@@ -167,7 +199,7 @@ const WalletScreen = () => {
         }}
       />
       
-      {wallets.length > 0 ? <TransactionList wallet={selectedWallet} /> : <ActivityIndicator size={50}/>}
+      {!selectedWallet ? <TransactionList wallet={selectedWallet} /> : null}
       <CreateWalletModal isModalVisible={isModalVisible} setModalIsVisible={setModalIsVisible} />
       <FloatingAction
         color={'#E50D7B'}
@@ -215,34 +247,39 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "flex-start",
     width: "100%",
+    height: 128,
     backgroundColor: "#E50D7B",
   },
   transactionList: { height: "100%", width: "100%" },
   transactionBox: {
-    padding: 10,
+    padding: 5,
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 10,
-    marginBottom: 10,
+    paddingHorizontal: 20,
     height: 70,
     width: "100%",
+    borderTopColor: 'white',
     borderLeftColor: "white",
     borderRightColor: "white",
     borderColor: "black",
-    borderWidth: 1,
+    borderWidth: 0.2,
     flexDirection:'row'
   },
   walletBox: {
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
     justifyContent: "space-around",
     padding: 10,
     backgroundColor: "white",
     alignSelf: "flex-end",
-    marginBottom: 20,
+    marginBottom: 0,
     marginLeft: 20,
     height: 70,
     width: 300,
   },
   createWalletBox: {
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
     justifyContent: "center",
     alignItems: "center",
     padding: 10,
@@ -250,7 +287,7 @@ const styles = StyleSheet.create({
     alignSelf: "auto",
     marginTop: 58,
     marginRight: 20,
-    marginBottom: 20,
+    marginBottom: 0,
     marginLeft: 20,
     height: 70,
     width: 50,
