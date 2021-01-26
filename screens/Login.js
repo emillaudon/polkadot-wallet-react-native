@@ -5,8 +5,11 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { NavigationContainer } from '@react-navigation/native';
 import { auth } from '../firebase';
 
+const logo = require('../assets/logo.png')
+
 import {
   StyleSheet,
+  Image,
   Text,
   View,
   FlatList,
@@ -51,6 +54,7 @@ const LoginBox = ({ navigation }) => {
 
             <TextInput 
                 placeholder={'Password'}
+                secureTextEntry={true}
                 style={ styles.inputText }
                 onChangeText={(text) => password = text}
             />
@@ -80,6 +84,7 @@ export default function Login({ navigation }) {
     console.log(navigation)
   return (
     <View style={styles.loginScreen}>
+        <Image style={{ height: 200, width: 300, marginBottom: 50 }}source={logo}/>
         <LoginBox navigation={ navigation } />
 
     </View>
@@ -88,11 +93,13 @@ export default function Login({ navigation }) {
 
 const styles = StyleSheet.create({
   loginScreen: {
-      justifyContent: 'center',
+      flexDirection: 'column',
+      justifyContent: 'flex-start',
       alignItems: 'center',
       height: '100%',
       width: '100%',
-      backgroundColor: 'pink'
+      backgroundColor: '#E50D7B',
+      paddingTop: '30%'
   },
   inputText: {
       backgroundColor: 'white',
@@ -102,9 +109,10 @@ const styles = StyleSheet.create({
   },
   loginButton: {
       alignSelf: 'center',
-      backgroundColor: 'grey',
+      backgroundColor: 'white',
       justifyContent: 'center',
       alignItems: 'center',
+      marginTop: 10,
       marginHorizontal: 10,
       padding: 10,
       width: 100
