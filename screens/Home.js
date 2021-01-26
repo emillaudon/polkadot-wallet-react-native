@@ -15,15 +15,17 @@ import {
   FlatList,
   TouchableOpacity,
   ActivityIndicator,
+  Modal,
 } from "react-native";
+import { set } from "react-native-reanimated";
 
 let networkHandler = new NetworkHandler();
 
-const CreateWalletBox = ({ wallets, setWallets }) => {
+const CreateWalletBox = ({ wallets, setWallets, setModalIsVisible }) => {
   return (
     <TouchableOpacity
       onPress={() =>
-        networkHandler.generateNewWallet()
+        setModalIsVisible(true)
       }
       style={styles.createWalletBox}
     >
@@ -53,7 +55,7 @@ const WalletBox = ({ item, setSelectedWallet }) => {
   );
 };
 
-const Header = ({ wallets, setWallets, setSelectedWallet }) => {
+const Header = ({ wallets, setWallets, setSelectedWallet, setModalIsVisible }) => {
   return (
     <View style={styles.header}>
       <FlatList
@@ -62,7 +64,7 @@ const Header = ({ wallets, setWallets, setSelectedWallet }) => {
         renderItem={({ item, index }) => <WalletBox item={item} setSelectedWallet={setSelectedWallet} />}
         ListHeaderComponent={ wallets.length > 0 ? null : <ActivityIndicator size={50} style={{ paddingTop:70 }}/> }
         ListFooterComponent={
-          <CreateWalletBox wallets={wallets} setWallets={setWallets} />
+          <CreateWalletBox wallets={wallets} setWallets={setWallets} setModalIsVisible={setModalIsVisible} />
         }
       />
     </View>
@@ -103,9 +105,47 @@ const TransactionList = ({ wallet }) => {
   );
 };
 
+const CreateWalletModal = ({ isModalVisible, setModalIsVisible }) => {
+  const [loading, setLoading] = useState();
+  return(
+    <Modal visible={isModalVisible} transparent={true} >
+          <View
+            style={{ height: '100%', width: '100%', backgroundColor: 'rgba(1, 1, 1, 0.2)', justifyContent: 'center', alignItems: 'center' }}
+          >
+            <View
+              style={styles.createWalletModal}
+            >
+              <TouchableOpacity
+                onPress={() => { 
+                  setModalIsVisible(false)
+                   }}
+                style={{}}>
+                <Text style={{ paddingLeft: 10, fontSize: 20, fontWeight: 'bold', }}>x</Text>
+              </TouchableOpacity>
+
+              <Text style={{ fontSize: 18, fontWeight: 'bold', alignSelf: 'center' }}>Generate new wallet?</Text>
+              
+              <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+              <Button title="Cancel" onPress={() => {
+                setModalIsVisible(false)
+              }} />
+              <Button title="Yes" onPress={ () => {
+                networkHandler.generateNewWallet()
+                  .then(setModalIsVisible(false))
+              }} />
+              </View>
+            </View>
+          </View>
+        </Modal>
+  );
+
+}
+
 const WalletScreen = () => {
   const [wallets, setWallets] = useState([]);
   const [selectedWallet, setSelectedWallet] = useState();
+
+  const [isModalVisible, setModalIsVisible] = useState(false);
 
   useEffect(() => {
     async function loadData() {
@@ -117,18 +157,16 @@ const WalletScreen = () => {
   return (
     <View style={styles.WalletScreen}>
     
-    <Header wallets={wallets} setWallets={setWallets} setSelectedWallet={setSelectedWallet}/>
-      <Button 
+    <Header wallets={wallets} setWallets={setWallets} setSelectedWallet={setSelectedWallet} setModalIsVisible={setModalIsVisible}
         title={'Force load'}
         onPress={async () => {
           let networkHandler = new NetworkHandler();
           networkHandler.getUserData(setWallets, setSelectedWallet)
-        
-          
         }}
       />
-      {selectedWallet ? <TransactionList wallet={selectedWallet} /> : <ActivityIndicator size={50}/>}
       
+      {selectedWallet ? <TransactionList wallet={selectedWallet} /> : <ActivityIndicator size={50}/>}
+      <CreateWalletModal isModalVisible={isModalVisible} setModalIsVisible={setModalIsVisible} />
     </View>
   );
 };
@@ -189,5 +227,12 @@ const styles = StyleSheet.create({
     height: 70,
     width: 50,
   },
+  createWalletModal: {
+    justifyContent: 'space-around',
+    flexDirection: 'column',
+    backgroundColor: 'white',
+    width: '60%',
+    height: '15%'
+  }
 
 });
