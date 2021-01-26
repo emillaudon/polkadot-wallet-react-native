@@ -71,7 +71,8 @@ const Header = ({ wallets, setWallets, setSelectedWallet, setModalIsVisible }) =
   );
 };
 
-const TransactionBox = ({ transaction }) => {
+const TransactionBox = ({ transactionData }) => {
+  let transaction = transactionData.data
   
   return (
     <View
@@ -99,7 +100,7 @@ const TransactionList = ({ wallet }) => {
     <View style={styles.transactionList}>
       <FlatList
         data={wallet.transactions}
-        renderItem={({ item, index }) => <TransactionBox transaction={item} />}
+        renderItem={({ item, index }) => <TransactionBox transactionData={item} />}
       />
     </View>
   );
