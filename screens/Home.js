@@ -17,19 +17,13 @@ import {
   ActivityIndicator,
 } from "react-native";
 
+let networkHandler = new NetworkHandler();
+
 const CreateWalletBox = ({ wallets, setWallets }) => {
   return (
     <TouchableOpacity
       onPress={() =>
-        setWallets([
-          ...wallets,
-          {
-            amount: 1,
-            to: "0xdfaffafe33jxijd",
-            from: "zzxxsxjfjejfefkef",
-            time: "15:54",
-          },
-        ])
+        networkHandler.generateNewWallet()
       }
       style={styles.createWalletBox}
     >
@@ -76,7 +70,7 @@ const Header = ({ wallets, setWallets, setSelectedWallet }) => {
 };
 
 const TransactionBox = ({ transaction }) => {
-  console.log(transaction)
+  
   return (
     <View
       style={styles.transactionBox}
@@ -115,7 +109,6 @@ const WalletScreen = () => {
 
   useEffect(() => {
     async function loadData() {
-      let networkHandler = new NetworkHandler();
       networkHandler.getUserData(setWallets, setSelectedWallet)
     }
     loadData();

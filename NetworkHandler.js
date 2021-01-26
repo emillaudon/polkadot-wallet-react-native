@@ -1,12 +1,17 @@
 import firebase, { auth } from './firebase';
 import { add } from 'react-native-reanimated';
 
+const url = 'http://192.168.1.14:3000';
+let user = 'user'
+
 export default class NetworkHandler {
 
     async getUserData(setWallets, setSelectedWallet) {
+        user = auth.currentUser.uid;
+        console.log(user);
         let wallets = []
 
-        let ref = firebase.firestore().collection('users').doc('user').collection('wallets')
+        let ref = firebase.firestore().collection('users').doc(user).collection('wallets')
 
         ref.onSnapshot((snapShot) => {
             snapShot.forEach((col) => {
@@ -14,7 +19,7 @@ export default class NetworkHandler {
                 let balance = col.data().balance
 
                 let transactions = [];
-                let ref = firebase.firestore().collection('users').doc('user').collection('wallets').doc(address).collection('transactions')
+                let ref = firebase.firestore().collection('users').doc(user).collection('wallets').doc(address).collection('transactions')
                 
                 ref.onSnapshot((snapShot) => {
                     snapShot.forEach((transaction) => {
@@ -32,20 +37,15 @@ export default class NetworkHandler {
                 wallets.push(wallet);
                 
             })
-            setWallets(wallets)
-            
-            
-            
-            
+            setWallets(wallets)          
         })
-                        
-        /*
-        let networker = new Networker();
-  networker.getUserData();
+    }
 
-        */
-       
-
+    async generateNewWallet() {
+        let response = await fetch(url + '/generateWallet/' + user);
+        let responseString = await response.text();
+        
+        return responseString;
     }
 
 

@@ -20,10 +20,10 @@ import {
 const login = async (email, password, setErrorText, navigation) => {
     try {
         await auth.signInWithEmailAndPassword(email, password);
-        console.log(auth.currentUser);
         navigation.navigate('Home')
     } catch (error) {
         let e = error.toString();
+        console.log(e)
         setErrorText(e)
     }
 }
