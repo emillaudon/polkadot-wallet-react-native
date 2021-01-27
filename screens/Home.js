@@ -62,7 +62,7 @@ const Header = ({ wallets, setWallets, setSelectedWallet, setModalIsVisible }) =
   
   return (
     <View style={styles.header}>
-      <ImageBackground source={logo} style={{ resizeMode: 'cover', resizeMethod: 'resize' }}>
+      <ImageBackground source={logo} style={{ resizeMode: 'cover', resizeMethod: 'resize', height: '100%', width: '100%' }}>
       
       <FlatList
         horizontal={true}
@@ -80,23 +80,25 @@ const Header = ({ wallets, setWallets, setSelectedWallet, setModalIsVisible }) =
 };
 
 const TransactionBox = ({ transactionData }) => {
-  //let transaction = transactionData.data
-  let transaction = transactionData;
-  let color = transaction.received ? 'green' : 'red'
+  let transaction = transactionData.data()
+  console.log(transactionData.data)
+  //let transaction = transactionData;
+  console.log(transaction.receiving)
+  let color = transaction.receiving ? 'green' : 'red'
   
   return (
     <View
       style={styles.transactionBox}
     >
-      <View>
-        <Text style={{ fontSize: 15,fontWeight: 'bold' }}>{transaction.received ? 'From' : 'To'}</Text>
-        <Text style={{ fontStyle: 'italic' }}>{transaction.received ? transaction.from : transaction.to}</Text>
+      <View style={{ width: 220 }}>
+        <Text style={{ fontSize: 15,fontWeight: 'bold' }}>{transaction.receiving ? 'From' : 'To'}</Text>
+        <Text style={{ fontStyle: 'italic' }}>{!transaction.receiving ? transaction.from : transaction.to}</Text>
       </View>
       
 
       <View style={{ flexDirection: 'row' }}>
-        <Text style={{ fontSize: 20, color: color }}>{transaction.received ? '+ ' : '- '}</Text>
-        <Text style={{ fontSize: 22, color: color }}>{transaction.amount} DOT</Text>
+        <Text style={{ fontSize: 16, color: color }}>{transaction.receiving ? '+ ' : '- '}</Text>
+        <Text style={{ fontSize: 18, color: color }}>{transaction.amount} DOT</Text>
       </View>
     </View>
   );
@@ -132,7 +134,7 @@ const TransactionList = ({ wallet }) => {
   return (
     <View style={styles.transactionList}>
       <FlatList
-        data={i}
+        data={wallet.transactions}
         renderItem={({ item, index }) => <TransactionBox transactionData={item} />}
       />
     </View>
@@ -199,7 +201,7 @@ const WalletScreen = () => {
         }}
       />
       
-      {!selectedWallet ? <TransactionList wallet={selectedWallet} /> : null}
+      {selectedWallet ? <TransactionList wallet={selectedWallet} /> : null}
       <CreateWalletModal isModalVisible={isModalVisible} setModalIsVisible={setModalIsVisible} />
       <FloatingAction
         color={'#E50D7B'}

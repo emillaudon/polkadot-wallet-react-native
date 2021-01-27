@@ -61,7 +61,9 @@ export default class NetworkHandler {
                         }
                     })
                     
-                    
+                    transactionsData.sort((a, b) => {
+                        return b.data().timestamp - a.data().timestamp;
+                    })
                     
 
                     wallet = {
