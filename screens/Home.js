@@ -1,10 +1,12 @@
-
 import { StatusBar } from "expo-status-bar";
 //import './shim';
 import React, { useState, useEffect } from "react";
-import { auth, firestore } from '../firebase';
-import NetworkHandler from '../NetworkHandler';
-
+import { auth, firestore } from "../firebase";
+import NetworkHandler from "../NetworkHandler";
+import SlidingUpPanel from "rn-sliding-up-panel";
+//import Clipboard from '@react-native-community/clipboard';
+import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
+import FontAwesome from "react-native-vector-icons/FontAwesome";
 //import Identicon from '@polkadot/reactnative-identicon';
 import { FloatingAction } from "react-native-floating-action";
 import {
@@ -18,17 +20,17 @@ import {
   Modal,
   Image,
   ImageBackground,
+  Animated,
 } from "react-native";
 import { set } from "react-native-reanimated";
+import { TextInput } from "react-native-paper";
 
 let networkHandler = new NetworkHandler();
 
 const CreateWalletBox = ({ wallets, setWallets, setModalIsVisible }) => {
   return (
     <TouchableOpacity
-      onPress={() =>
-        setModalIsVisible(true)
-      }
+      onPress={() => setModalIsVisible(true)}
       style={styles.createWalletBox}
     >
       <View>
@@ -44,9 +46,9 @@ const WalletBox = ({ item, setSelectedWallet }) => {
       onPress={() => setSelectedWallet(item)}
       style={styles.walletBox}
     >
-      <View style={{ flexDirection: 'row' }}>
+      <View style={{ flexDirection: "row" }}>
         <View>
-          <Text style={{ fontStyle: 'italic' }}>{item.address}</Text>
+          <Text style={{ fontStyle: "italic" }}>{item.address}</Text>
           <Text style={{ fontSize: 17 }}>
             {item.balance}{" "}
             <Text style={{ fontSize: 17, fontWeight: "bold" }}>DOT</Text>
@@ -57,48 +59,75 @@ const WalletBox = ({ item, setSelectedWallet }) => {
   );
 };
 
-const Header = ({ wallets, setWallets, setSelectedWallet, setModalIsVisible }) => {
-  const logo = require('../assets/logo.png')
-  
+const Header = ({
+  wallets,
+  setWallets,
+  setSelectedWallet,
+  setModalIsVisible,
+}) => {
+  const logo = require("../assets/logo.png");
+
   return (
     <View style={styles.header}>
-      <ImageBackground source={logo} style={{ resizeMode: 'cover', resizeMethod: 'resize', height: '100%', width: '100%' }}>
-      
-      <FlatList
-        horizontal={true}
-        showsHorizontalScrollIndicator={false}
-        data={wallets}
-        renderItem={({ item, index }) => <WalletBox item={item} setSelectedWallet={setSelectedWallet} />}
-        ListHeaderComponent={ wallets.length > 0 ? null : <ActivityIndicator size={50} style={{ paddingTop:70 }}/> }
-        ListFooterComponent={
-          <CreateWalletBox wallets={wallets} setWallets={setWallets} setModalIsVisible={setModalIsVisible} />
-        }
-      />
+      <ImageBackground
+        source={logo}
+        style={{
+          resizeMode: "cover",
+          resizeMethod: "resize",
+          height: "100%",
+          width: "100%",
+        }}
+      >
+        <FlatList
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          data={wallets}
+          renderItem={({ item, index }) => (
+            <WalletBox item={item} setSelectedWallet={setSelectedWallet} />
+          )}
+          ListHeaderComponent={
+            wallets.length > 0 ? null : (
+              <ActivityIndicator size={50} style={{ paddingTop: 70 }} />
+            )
+          }
+          ListFooterComponent={
+            <CreateWalletBox
+              wallets={wallets}
+              setWallets={setWallets}
+              setModalIsVisible={setModalIsVisible}
+            />
+          }
+        />
       </ImageBackground>
     </View>
   );
 };
 
 const TransactionBox = ({ transactionData }) => {
-  let transaction = transactionData.data()
-  console.log(transactionData.data)
+  let transaction = transactionData.data();
+  console.log(transactionData.data);
   //let transaction = transactionData;
-  console.log(transaction.receiving)
-  let color = transaction.receiving ? 'green' : 'red'
-  
-  return (
-    <View
-      style={styles.transactionBox}
-    >
-      <View style={{ width: 220 }}>
-        <Text style={{ fontSize: 15,fontWeight: 'bold' }}>{transaction.receiving ? 'From' : 'To'}</Text>
-        <Text style={{ fontStyle: 'italic' }}>{!transaction.receiving ? transaction.from : transaction.to}</Text>
-      </View>
-      
+  console.log(transaction.receiving);
+  let color = transaction.receiving ? "green" : "red";
 
-      <View style={{ flexDirection: 'row' }}>
-        <Text style={{ fontSize: 16, color: color }}>{transaction.receiving ? '+ ' : '- '}</Text>
-        <Text style={{ fontSize: 18, color: color }}>{transaction.amount} DOT</Text>
+  return (
+    <View style={styles.transactionBox}>
+      <View style={{ width: 220 }}>
+        <Text style={{ fontSize: 15, fontWeight: "bold" }}>
+          {transaction.receiving ? "From" : "To"}
+        </Text>
+        <Text style={{ fontStyle: "italic" }}>
+          {transaction.receiving ? transaction.from : transaction.to}
+        </Text>
+      </View>
+
+      <View style={{ flexDirection: "row" }}>
+        <Text style={{ fontSize: 16, color: color }}>
+          {transaction.receiving ? "+ " : "- "}
+        </Text>
+        <Text style={{ fontSize: 18, color: color }}>
+          {transaction.amount} DOT
+        </Text>
       </View>
     </View>
   );
@@ -109,33 +138,32 @@ const TransactionList = ({ wallet }) => {
     {
       received: true,
       amount: 20,
-      from: 'faksfkasfasfafasfafaf',
-      to: 'faoskfapksfaksfkasfkakfasfas',
-      date: '2020/21/02 15:48'
-
+      from: "faksfkasfasfafasfafaf",
+      to: "faoskfapksfaksfkasfkakfasfas",
+      date: "2020/21/02 15:48",
     },
     {
       received: false,
       amount: 220,
-      from: 'faksfkasfasfafasfafaf',
-      to: 'faoskfapksfaksfkasfkakfasfas',
-      date: '2020/21/02 15:48'
-
+      from: "faksfkasfasfafasfafaf",
+      to: "faoskfapksfaksfkasfkakfasfas",
+      date: "2020/21/02 15:48",
     },
     {
       received: false,
       amount: 10,
-      from: 'faksfkasfasfafasfafaf',
-      to: 'faoskfapksfaksfkasfkakfasfas',
-      date: '2020/21/02 15:48'
-
-    }
-  ]
+      from: "faksfkasfasfafasfafaf",
+      to: "faoskfapksfaksfkasfkakfasfas",
+      date: "2020/21/02 15:48",
+    },
+  ];
   return (
     <View style={styles.transactionList}>
       <FlatList
         data={wallet.transactions}
-        renderItem={({ item, index }) => <TransactionBox transactionData={item} />}
+        renderItem={({ item, index }) => (
+          <TransactionBox transactionData={item} />
+        )}
       />
     </View>
   );
@@ -143,39 +171,190 @@ const TransactionList = ({ wallet }) => {
 
 const CreateWalletModal = ({ isModalVisible, setModalIsVisible }) => {
   const [loading, setLoading] = useState();
-  return(
-    <Modal visible={isModalVisible} transparent={true} >
-          <View
-            style={{ height: '100%', width: '100%', backgroundColor: 'rgba(1, 1, 1, 0.2)', justifyContent: 'center', alignItems: 'center' }}
+  return (
+    <Modal visible={isModalVisible} transparent={true}>
+      <View
+        style={{
+          height: "100%",
+          width: "100%",
+          backgroundColor: "rgba(1, 1, 1, 0.2)",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <View style={styles.createWalletModal}>
+          <TouchableOpacity
+            onPress={() => {
+              setModalIsVisible(false);
+            }}
+            style={{}}
           >
-            <View
-              style={styles.createWalletModal}
-            >
-              <TouchableOpacity
-                onPress={() => { 
-                  setModalIsVisible(false)
-                   }}
-                style={{}}>
-                <Text style={{ paddingLeft: 10, fontSize: 20, fontWeight: 'bold', }}>x</Text>
-              </TouchableOpacity>
+            <Text style={{ paddingLeft: 10, fontSize: 20, fontWeight: "bold" }}>
+              x
+            </Text>
+          </TouchableOpacity>
 
-              <Text style={{ fontSize: 18, fontWeight: 'bold', alignSelf: 'center' }}>Generate new wallet?</Text>
-              
-              <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-              <Button title="Cancel" onPress={() => {
-                setModalIsVisible(false)
-              }} />
-              <Button title="Yes" onPress={ () => {
-                networkHandler.generateNewWallet()
-                  .then(setModalIsVisible(false))
-              }} />
-              </View>
-            </View>
+          <Text
+            style={{ fontSize: 18, fontWeight: "bold", alignSelf: "center" }}
+          >
+            Generate new wallet?
+          </Text>
+
+          <View
+            style={{ flexDirection: "row", justifyContent: "space-around" }}
+          >
+            <Button
+              title="Cancel"
+              onPress={() => {
+                setModalIsVisible(false);
+              }}
+            />
+            <Button
+              title="Yes"
+              onPress={() => {
+                networkHandler
+                  .generateNewWallet()
+                  .then(setModalIsVisible(false));
+              }}
+            />
           </View>
-        </Modal>
+        </View>
+      </View>
+    </Modal>
   );
+};
 
-}
+const BottomTab = ({ showPanel, setSendPressed }) => {
+  return (
+    <View
+      style={{
+        height: "9%",
+        width: "100%",
+        backgroundColor: "white",
+        position: "absolute",
+        bottom: 0,
+        flexDirection: "row",
+        justifyContent: "space-evenly",
+        borderTopColor: "black",
+        borderWidth: 0.2,
+      }}
+    >
+      <TouchableOpacity
+        onPress={() => {
+          setSendPressed(true);
+          showPanel(500);
+        }}
+      >
+        <View style={{ flexDirection: "column", alignItems: "center" }}>
+          <MaterialCommunityIcons
+            name={"arrow-up-bold-hexagon-outline"}
+            brand
+            size={40}
+            color={"black"}
+          />
+          <Text> Send </Text>
+        </View>
+      </TouchableOpacity>
+      <TouchableOpacity
+        onPress={() => {
+          setSendPressed(false);
+          showPanel();
+        }}
+      >
+        <View style={{ flexDirection: "column", alignItems: "center" }}>
+          <MaterialCommunityIcons
+            name={"archive-arrow-down-outline"}
+            brand
+            size={40}
+            color={"black"}
+          />
+          <Text> Receive </Text>
+        </View>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const ReceivePanel = ({ wallets }) => {
+  return (
+    <View
+      style={{
+        backgroundColor: "white",
+        height: "100%",
+        width: "100%",
+        alignSelf: "center",
+      }}
+    >
+      <View style={styles.container}>
+        <Text style={{ fontWeight: "bold", padding: 10 }}>
+          Press Wallet To Copy Address
+        </Text>
+        <FlatList
+          data={wallets}
+          renderItem={({ item, index }) => {
+            return (
+              <TouchableOpacity onPress={() => console.log()}>
+                <View style={{ flexDirection: "row" }}>
+                  <Text style={{ width: "60%", padding: 10 }}>
+                    {item.address}
+                  </Text>
+                  <Text style={{ fontWeight: "bold", padding: 10 }}>
+                    {item.balance}
+                  </Text>
+                </View>
+              </TouchableOpacity>
+            );
+          }}
+        />
+      </View>
+    </View>
+  );
+};
+
+const SendPanel = ({ wallets }) => {
+  return (
+    <View
+      style={{
+        backgroundColor: "white",
+        height: "100%",
+        width: "100%",
+        alignSelf: "center",
+      }}
+    >
+      <View style={styles.container}>
+        <Text style={{ fontWeight: "bold", padding: 10, fontSize: 19 }}>
+          Send{" "}
+        </Text>
+        <Text
+          style={{ padding: 15, backgroundColor: "#eaeaeaea", color: "black" }}
+        >
+          Receiving Address{" "}
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "space-around",
+          }}
+        >
+          <TextInput
+            style={{
+              width: "80%",
+              borderBottomColor: "white",
+              backgroundColor: "white",
+            }}
+          />
+          <FontAwesome name={"qrcode"} size={40} color={"blue"} />
+        </View>
+        <Text
+          style={{ padding: 15, backgroundColor: "#eaeaeaea", color: "black" }}
+        >
+          Fee:{" "}
+        </Text>
+      </View>
+    </View>
+  );
+};
 
 const WalletScreen = () => {
   const [wallets, setWallets] = useState([]);
@@ -183,32 +362,50 @@ const WalletScreen = () => {
 
   const [isModalVisible, setModalIsVisible] = useState(false);
 
+  const [sendPressed, setSendPressed] = useState(true);
+
   useEffect(() => {
     async function loadData() {
-      networkHandler.getUserData(setWallets, setSelectedWallet)
+      networkHandler.getUserData(setWallets, setSelectedWallet);
     }
     loadData();
-  }, [])
+  }, []);
 
   return (
     <View style={styles.walletScreen}>
-    
-    <Header wallets={wallets} setWallets={setWallets} setSelectedWallet={setSelectedWallet} setModalIsVisible={setModalIsVisible}
-        title={'Force load'}
+      <Header
+        wallets={wallets}
+        setWallets={setWallets}
+        setSelectedWallet={setSelectedWallet}
+        setModalIsVisible={setModalIsVisible}
+        title={"Force load"}
         onPress={async () => {
           let networkHandler = new NetworkHandler();
-          networkHandler.getUserData(setWallets, setSelectedWallet)
+          networkHandler.getUserData(setWallets, setSelectedWallet);
         }}
       />
-      
+
       {selectedWallet ? <TransactionList wallet={selectedWallet} /> : null}
-      <CreateWalletModal isModalVisible={isModalVisible} setModalIsVisible={setModalIsVisible} />
-      <FloatingAction
-        color={'#E50D7B'}
-        onPressItem={name => {
-      console.log(`selected button: ${name}`);
-    }}
-  />
+      <CreateWalletModal
+        isModalVisible={isModalVisible}
+        setModalIsVisible={setModalIsVisible}
+      />
+
+      <BottomTab
+        showPanel={(val) => _panel.show(val)}
+        setSendPressed={setSendPressed}
+      />
+      <SlidingUpPanel
+        ref={(c) => (_panel = c)}
+        draggableRange={{ top: sendPressed ? 500 : 200, bottom: 0 }}
+        showBackdrop={true}
+      >
+        {sendPressed ? (
+          <SendPanel wallets={wallets} />
+        ) : (
+          <ReceivePanel wallets={wallets} />
+        )}
+      </SlidingUpPanel>
     </View>
   );
 };
@@ -255,17 +452,17 @@ const styles = StyleSheet.create({
   transactionList: { height: "100%", width: "100%" },
   transactionBox: {
     padding: 5,
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    justifyContent: "space-between",
+    alignItems: "center",
     paddingHorizontal: 20,
     height: 70,
     width: "100%",
-    borderTopColor: 'white',
+    borderTopColor: "white",
     borderLeftColor: "white",
     borderRightColor: "white",
     borderColor: "black",
     borderWidth: 0.2,
-    flexDirection:'row'
+    flexDirection: "row",
   },
   walletBox: {
     borderTopLeftRadius: 10,
@@ -295,20 +492,27 @@ const styles = StyleSheet.create({
     width: 50,
   },
   createWalletModal: {
-    justifyContent: 'space-around',
-    flexDirection: 'column',
-    backgroundColor: 'white',
-    width: '60%',
-    height: '15%'
+    justifyContent: "space-around",
+    flexDirection: "column",
+    backgroundColor: "white",
+    width: "60%",
+    height: "15%",
   },
   fab: {
-    position: 'absolute',
+    position: "absolute",
     width: 50,
     height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     right: 30,
     bottom: 30,
   },
-
+  subView: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "#FFFFFF",
+    height: 100,
+  },
 });
