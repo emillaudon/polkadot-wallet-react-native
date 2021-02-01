@@ -22,7 +22,7 @@ import {
   ImageBackground,
   Animated,
 } from "react-native";
-import { set } from "react-native-reanimated";
+import { set, add } from "react-native-reanimated";
 import { TextInput } from "react-native-paper";
 
 let networkHandler = new NetworkHandler();
@@ -311,7 +311,12 @@ const ReceivePanel = ({ wallets }) => {
   );
 };
 
-const SendPanel = ({ wallets }) => {
+const SendPanel = ({ wallets, selectedWallet }) => {
+  let [fee, setFee] = useState(0);
+  let [loadingFee, setLodingFee] = useState(false);
+  let address = '';
+  let amount = 0.0;
+
   return (
     <View
       style={{
@@ -338,8 +343,15 @@ const SendPanel = ({ wallets }) => {
           }}
         >
           <TextInput
+          onChangeText={(text) => address = text}
+          underlineColorAndroid={'rgba(0,0,0,0)' }
+          autoCorrect={false}
             style={{
+              borderColor: 'white',
               width: "80%",
+              borderBottomWidth:0,
+              borderWidth: 0,
+              underlineColorAndroid: 'white',
               borderBottomColor: "white",
               backgroundColor: "white",
             }}
@@ -349,8 +361,59 @@ const SendPanel = ({ wallets }) => {
         <Text
           style={{ padding: 15, backgroundColor: "#eaeaeaea", color: "black" }}
         >
+          Amount
+        </Text>
+        <View
+          style={{
+            flexDirection: "row",
+            alignItems: "center",
+            paddingHorizontal: 15
+          }}
+        >
+          <TextInput
+          onChangeText={(text) => {
+            console.log(1)
+            console.log(text)
+            try {
+              console.log(2)
+              let val = parseFloat(text);
+              if (!isNaN(val)) {
+                amount = val;
+              console.log(amount)
+              }
+              console.log(val)
+              console.log(3)
+
+            } catch (e) {
+              console.log(e);
+            }
+          }}
+          underlineColorAndroid={'rgba(0,0,0,0)' }
+          autoCorrect={false}
+            style={{
+              borderColor: 'white',
+              width: "80%",
+              borderBottomWidth:0,
+              borderWidth: 0,
+              underlineColorAndroid: 'white',
+              borderBottomColor: "white",
+              backgroundColor: "white",
+            }}
+          />
+        </View>
+
+        <Text
+          style={{ padding: 15, backgroundColor: "#eaeaeaea", color: "black" }}
+        >
           Fee:{" "}
         </Text>
+        
+        <TouchableOpacity 
+        onPress={() => networkHandler.performTransaction(selectedWallet.address, address, amount)}
+        style={{ alignSelf: 'center', marginTop: 60, padding: 15, paddingHorizontal: 40,backgroundColor: 'pink' }} >
+        <Text>Send</Text>
+          
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -401,7 +464,7 @@ const WalletScreen = () => {
         showBackdrop={true}
       >
         {sendPressed ? (
-          <SendPanel wallets={wallets} />
+          <SendPanel wallets={wallets} selectedWallet={selectedWallet} />
         ) : (
           <ReceivePanel wallets={wallets} />
         )}

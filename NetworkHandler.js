@@ -6,6 +6,17 @@ let user = 'user'
 
 export default class NetworkHandler {
 
+    async performTransaction(sendingAddress, toAddress, amount) {
+        console.log(amount)
+        let user = auth.currentUser.uid;
+        console.log(toAddress);
+
+        fetch(url + `/transact/?sender=${sendingAddress}&recipient=${toAddress}&user=${user}&amount=${amount}`, {
+            method: 'POST',
+        }).then((response) => console.log(response.json()))
+
+    }
+
     async getUserData(setWallets, setSelectedWallet) {
         user = auth.currentUser.uid;
         console.log(user);
