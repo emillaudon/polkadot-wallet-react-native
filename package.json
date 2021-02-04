@@ -64,6 +64,8 @@
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
+    "@react-native-community/eslint-config": "^2.0.0",
+    "eslint": "^7.19.0",
     "rn-nodeify": "^10.2.0"
   },
   "private": true,
