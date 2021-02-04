@@ -40,7 +40,17 @@ const CreateWalletBox = ({ wallets, setWallets, setModalIsVisible }) => {
   );
 };
 
-const WalletBox = ({ item, setSelectedWallet }) => {
+const WalletBox = (props) => {
+  let item = 
+        props.item !== undefined
+          ? props.item
+          : {
+            address: 'No data',
+            balance: 'No data',
+          }
+  let setSelectedWallet = props.setSelectedWallet;
+
+
   return (
     <TouchableOpacity
       onPress={() => setSelectedWallet(item)}
@@ -85,6 +95,7 @@ const Header = ({
           renderItem={({ item, index }) => (
             <WalletBox item={item} setSelectedWallet={setSelectedWallet} />
           )}
+          keyExtractor={(item, index) => item.key = 'key' + index}
           ListHeaderComponent={
             wallets.length > 0 ? null : (
               <ActivityIndicator size={50} style={{ paddingTop: 70 }} />
@@ -105,9 +116,7 @@ const Header = ({
 
 const TransactionBox = ({ transactionData }) => {
   let transaction = transactionData.data();
-  console.log(transactionData.data);
   //let transaction = transactionData;
-  console.log(transaction.receiving);
   let color = transaction.receiving ? "green" : "red";
 
   return (
@@ -134,29 +143,6 @@ const TransactionBox = ({ transactionData }) => {
 };
 
 const TransactionList = ({ wallet }) => {
-  let i = [
-    {
-      received: true,
-      amount: 20,
-      from: "faksfkasfasfafasfafaf",
-      to: "faoskfapksfaksfkasfkakfasfas",
-      date: "2020/21/02 15:48",
-    },
-    {
-      received: false,
-      amount: 220,
-      from: "faksfkasfasfafasfafaf",
-      to: "faoskfapksfaksfkasfkakfasfas",
-      date: "2020/21/02 15:48",
-    },
-    {
-      received: false,
-      amount: 10,
-      from: "faksfkasfasfafasfafaf",
-      to: "faoskfapksfaksfkasfkakfasfas",
-      date: "2020/21/02 15:48",
-    },
-  ];
   return (
     <View style={styles.transactionList}>
       <FlatList
@@ -434,6 +420,13 @@ const WalletScreen = () => {
     loadData();
   }, []);
 
+  let headerProps = {
+    wallets: wallets,
+    setWallets: setWallets,
+    setSelectedWallet: setSelectedWallet,
+    setModalIsVisible: setModalIsVisible
+  }
+
   return (
     <View style={styles.walletScreen}>
       <Header
@@ -448,7 +441,7 @@ const WalletScreen = () => {
         }}
       />
 
-      {selectedWallet ? <TransactionList wallet={selectedWallet} /> : null}
+      {selectedWallet && wallets.length > 0 ? <TransactionList wallet={selectedWallet} /> : null}
       <CreateWalletModal
         isModalVisible={isModalVisible}
         setModalIsVisible={setModalIsVisible}
