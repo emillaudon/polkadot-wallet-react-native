@@ -107,8 +107,8 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
     marginTop: 60,
     padding: 15,
-    paddingHorizontal: 40,
-    backgroundColor: 'pink',
+    paddingHorizontal: 60,
+    backgroundColor: '#E50D7B',
   },
   text: { padding: 15, backgroundColor: '#eaeaeaea', color: 'black' },
 });

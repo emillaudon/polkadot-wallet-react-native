@@ -67,4 +67,20 @@ export default LoginBox;
 
 const styles = StyleSheet.create({
   errorText: { fontSize: 10, color: 'red', alignSelf: 'center', margin: 15 },
+  inputText: {
+    backgroundColor: 'white',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 20,
+  },
+  loginButton: {
+    alignSelf: 'center',
+    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: 10,
+    marginHorizontal: 10,
+    padding: 10,
+    width: 100,
+  },
 });
