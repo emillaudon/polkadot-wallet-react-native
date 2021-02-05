@@ -17,6 +17,7 @@ export default class NetworkHandler {
     ).then((response) => console.log(response.json()));
   }
 
+  //Gets all the wallets from firebase belonging to the user with its transactions and then updates the wallets state
   async getUserData(setWallets, setSelectedWallet) {
     user = auth.currentUser.uid;
     console.log(user);
