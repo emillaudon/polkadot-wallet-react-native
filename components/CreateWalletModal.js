@@ -12,18 +12,9 @@ import {
 let networkHandler = new NetworkHandler();
 
 const CreateWalletModal = ({ isModalVisible, setModalIsVisible }) => {
-  const [loading, setLoading] = useState();
   return (
     <Modal visible={isModalVisible} transparent={true}>
-      <View
-        style={{
-          height: '100%',
-          width: '100%',
-          backgroundColor: 'rgba(1, 1, 1, 0.2)',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
+      <View style={styles.createWalletModalBG}>
         <View style={styles.createWalletModal}>
           <TouchableOpacity
             onPress={() => {
@@ -75,5 +66,12 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     width: '60%',
     height: '15%',
+  },
+  createWalletModalBG: {
+    height: '100%',
+    width: '100%',
+    backgroundColor: 'rgba(1, 1, 1, 0.2)',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

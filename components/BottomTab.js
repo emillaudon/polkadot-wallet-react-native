@@ -11,7 +11,7 @@ const BottomTab = ({ showPanel, setSendPressed }) => {
           showPanel(500);
         }}
       >
-        <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+        <View style={styles.icon}>
           <MaterialCommunityIcons
             name={'arrow-up-bold-hexagon-outline'}
             brand
@@ -27,7 +27,7 @@ const BottomTab = ({ showPanel, setSendPressed }) => {
           showPanel();
         }}
       >
-        <View style={{ flexDirection: 'column', alignItems: 'center' }}>
+        <View style={styles.icon}>
           <MaterialCommunityIcons
             name={'archive-arrow-down-outline'}
             brand
@@ -55,4 +55,5 @@ const styles = StyleSheet.create({
     borderTopColor: 'black',
     borderWidth: 0.2,
   },
+  icon: { flexDirection: 'column', alignItems: 'center' },
 });

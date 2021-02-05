@@ -58,15 +58,13 @@ const LoginBox = ({ navigation, login, register }) => {
         </TouchableOpacity>
       </View>
 
-      <Text
-        style={{ fontSize: 10, color: 'red', alignSelf: 'center', margin: 15 }}
-      >
-        {errorText}
-      </Text>
+      <Text style={styles.errorText}>{errorText}</Text>
     </View>
   );
 };
 
 export default LoginBox;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  errorText: { fontSize: 10, color: 'red', alignSelf: 'center', margin: 15 },
+});

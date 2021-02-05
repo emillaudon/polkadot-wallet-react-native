@@ -19,15 +19,7 @@ const Header = ({
 
   return (
     <View style={styles.header}>
-      <ImageBackground
-        source={logo}
-        style={{
-          resizeMode: 'cover',
-          resizeMethod: 'resize',
-          height: '100%',
-          width: '100%',
-        }}
-      >
+      <ImageBackground source={logo} style={styles.imageBackground}>
         <FlatList
           horizontal={true}
           showsHorizontalScrollIndicator={false}
@@ -63,5 +55,10 @@ const styles = StyleSheet.create({
     width: '100%',
     height: 128,
     backgroundColor: '#E50D7B',
+  },
+  imageBackground: {
+    resizeMode: 'cover',
+    height: '100%',
+    width: '100%',
   },
 });

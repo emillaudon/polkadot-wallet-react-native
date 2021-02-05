@@ -32,23 +32,11 @@ const SendPanel = ({ wallets, selectedWallet }) => {
             onChangeText={(text) => (address = text)}
             underlineColorAndroid={'rgba(0,0,0,0)'}
             autoCorrect={false}
-            style={{
-              borderColor: 'white',
-              width: '80%',
-              borderBottomWidth: 0,
-              borderWidth: 0,
-              underlineColorAndroid: 'white',
-              borderBottomColor: 'white',
-              backgroundColor: 'white',
-            }}
+            style={styles.input}
           />
           <FontAwesome name={'qrcode'} size={40} color={'blue'} />
         </View>
-        <Text
-          style={{ padding: 15, backgroundColor: '#eaeaeaea', color: 'black' }}
-        >
-          Amount
-        </Text>
+        <Text style={styles.text}>Amount</Text>
         <View
           style={{
             flexDirection: 'row',
@@ -75,23 +63,11 @@ const SendPanel = ({ wallets, selectedWallet }) => {
             }}
             underlineColorAndroid={'rgba(0,0,0,0)'}
             autoCorrect={false}
-            style={{
-              borderColor: 'white',
-              width: '80%',
-              borderBottomWidth: 0,
-              borderWidth: 0,
-              underlineColorAndroid: 'white',
-              borderBottomColor: 'white',
-              backgroundColor: 'white',
-            }}
+            style={styles.input}
           />
         </View>
 
-        <Text
-          style={{ padding: 15, backgroundColor: '#eaeaeaea', color: 'black' }}
-        >
-          Fee:{' '}
-        </Text>
+        <Text style={styles.text}>Fee: </Text>
 
         <TouchableOpacity
           onPress={() =>
@@ -101,13 +77,7 @@ const SendPanel = ({ wallets, selectedWallet }) => {
               amount
             )
           }
-          style={{
-            alignSelf: 'center',
-            marginTop: 60,
-            padding: 15,
-            paddingHorizontal: 40,
-            backgroundColor: 'pink',
-          }}
+          style={styles.button}
         >
           <Text>Send</Text>
         </TouchableOpacity>
@@ -125,4 +95,20 @@ const styles = StyleSheet.create({
     width: '100%',
     alignSelf: 'center',
   },
+  input: {
+    borderColor: 'white',
+    width: '80%',
+    borderBottomWidth: 0,
+    borderWidth: 0,
+    borderBottomColor: 'white',
+    backgroundColor: 'white',
+  },
+  button: {
+    alignSelf: 'center',
+    marginTop: 60,
+    padding: 15,
+    paddingHorizontal: 40,
+    backgroundColor: 'pink',
+  },
+  text: { padding: 15, backgroundColor: '#eaeaeaea', color: 'black' },
 });
