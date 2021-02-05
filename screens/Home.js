@@ -38,7 +38,6 @@ const WalletScreen = () => {
         setModalIsVisible={setModalIsVisible}
         title={'Force load'}
         onPress={async () => {
-          let networkHandler = new NetworkHandler();
           networkHandler.getUserData(setWallets, setSelectedWallet);
         }}
       />
