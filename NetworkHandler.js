@@ -1,120 +1,120 @@
 import firebase, { auth } from './firebase';
-import { add } from 'react-native-reanimated';
 
 const url = 'http://192.168.1.14:3000';
-let user = 'user'
+let user = 'user';
 
 export default class NetworkHandler {
+  async performTransaction(sendingAddress, toAddress, amount) {
+    user = auth.currentUser.uid;
+    console.log(toAddress);
 
-    async performTransaction(sendingAddress, toAddress, amount) {
-        console.log(amount)
-        let user = auth.currentUser.uid;
-        console.log(toAddress);
+    fetch(
+      url +
+        `/transact/?sender=${sendingAddress}&recipient=${toAddress}&user=${user}&amount=${amount}`,
+      {
+        method: 'POST',
+      }
+    ).then((response) => console.log(response.json()));
+  }
 
-        fetch(url + `/transact/?sender=${sendingAddress}&recipient=${toAddress}&user=${user}&amount=${amount}`, {
-            method: 'POST',
-        }).then((response) => console.log(response.json()))
+  async getUserData(setWallets, setSelectedWallet) {
+    user = auth.currentUser.uid;
+    console.log(user);
 
-    }
+    let ref = firebase
+      .firestore()
+      .collection('users')
+      .doc(user)
+      .collection('wallets');
 
-    async getUserData(setWallets, setSelectedWallet) {
-        user = auth.currentUser.uid;
-        console.log(user);
-        
+    ref.onSnapshot((snapShot) => {
+      let wallets = [];
+      snapShot.forEach((col) => {
+        let address = col.id;
+        let balance = col.data().balance;
 
-        let ref = firebase.firestore().collection('users').doc(user).collection('wallets')
+        let wallet = {
+          address: address,
+          balance: balance,
+        };
+
+        let transactionsData = [];
+        ref = firebase
+          .firestore()
+          .collection('users')
+          .doc(user)
+          .collection('wallets')
+          .doc(address)
+          .collection('transactions');
 
         ref.onSnapshot((snapShot) => {
-            let wallets = [];
-            snapShot.forEach((col) => {
-                let address = col.id;
-                let balance = col.data().balance
+          snapShot.forEach((transaction) => {
+            let transactionFound = false;
 
-                let wallet = {
-                    address: address,
-                    balance: balance,
-                    
-                }
+            transactionsData.forEach((transactionInArray) => {
+              console.log(transactionInArray.id);
+              console.log(transaction.id);
+              console.log(transactionInArray.id === transaction.id);
+              if (transactionInArray.id === transaction.id) {
+                let index = transactionsData.indexOf(transactionInArray);
+                transactionsData[index] = transaction;
+                transactionFound = true;
+              }
+            });
+            if (!transactionFound) {
+              transactionsData.push(transaction);
+            }
 
-                let transactionsData = [];
-                let ref = firebase.firestore().collection('users').doc(user).collection('wallets').doc(address).collection('transactions')
-                
-                ref.onSnapshot((snapShot) => {
+            let walletFound = false;
 
-                    snapShot.forEach((transaction) => {
-                        let transactionFound = false;
+            wallets.forEach((walletInArray) => {
+              if (walletInArray.address === wallet.address) {
+                let index = wallets.indexOf(walletInArray);
+                wallets[index] = wallet;
+                walletFound = true;
+              }
+            });
+            if (!walletFound) {
+              wallets.push(wallet);
+            }
+          });
 
-                        transactionsData.forEach((transactionInArray) => {
-                            console.log(transactionInArray.id);
-                            console.log(transaction.id);
-                            console.log(transactionInArray.id === transaction.id)
-                            if(transactionInArray.id === transaction.id) {
-                                let index = transactionsData.indexOf(transactionInArray);
-                                transactionsData[index] = transaction;
-                                transactionFound = true;
-                            } 
-                        })
-                        if(!transactionFound) {
-                            transactionsData.push(transaction);
-                        }
-                        
-                        let walletFound = false;
+          transactionsData.sort((a, b) => {
+            return b.data().timestamp - a.data().timestamp;
+          });
 
-                        wallets.forEach((walletInArray) => {
-                            if(walletInArray.address === wallet.address) {
-                                let index = wallets.indexOf(walletInArray);
-                                wallets[index] = wallet;
-                                walletFound = true;
-                            } 
-                        })
-                        if(!walletFound) {
-                            wallets.push(wallet);
-                        }
-                    })
-                    
-                    transactionsData.sort((a, b) => {
-                        return b.data().timestamp - a.data().timestamp;
-                    })
-                    
+          wallet = {
+            ...wallet,
+            transactions: transactionsData,
+          };
+          let walletFound = false;
 
-                    wallet = {
-                        ...wallet,
-                        transactions: transactionsData
-                    }
-                    let walletFound = false;
+          wallets.forEach((walletInArray) => {
+            if (walletInArray.address === wallet.address) {
+              let index = wallets.indexOf(walletInArray);
+              wallets[index] = wallet;
+              walletFound = true;
+            }
+          });
+          if (!walletFound) {
+            wallets.push(wallet);
+          }
 
-                    wallets.forEach((walletInArray) => {
-                        if(walletInArray.address === wallet.address) {
-                            let index = wallets.indexOf(walletInArray);
-                            wallets[index] = wallet;
-                            walletFound = true;
-                        } 
-                    })
-                    if(!walletFound) {
-                        wallets.push(wallet);
-                    }
+          setWallets((oldWallets) => {
+            setSelectedWallet((old) => old);
+            return wallets;
+          });
+        });
+      });
 
-                    setWallets((oldWallets) => {
+      //setWallets(wallets)
+    });
+  }
 
-                        setSelectedWallet((old) => old)
-                        return wallets
-                    })  
-                    
-                    
-                });
-            })
-            
-            //setWallets(wallets)  
-                 
-        })
-    }
+  async generateNewWallet() {
+    let response = await fetch(url + '/generateWallet/' + user);
+    let responseString = await response.text();
 
-    async generateNewWallet() {
-        let response = await fetch(url + '/generateWallet/' + user);
-        let responseString = await response.text();
-        
-        return responseString;
-    }
-
-
+    return responseString;
+  }
 }
